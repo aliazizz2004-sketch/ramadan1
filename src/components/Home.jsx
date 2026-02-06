@@ -1,0 +1,134 @@
+import React from 'react';
+import { Link } from 'react-router-dom';
+import { Book, Calendar, Sunrise, Gamepad2, Heart, Quote, Trophy, Fingerprint, BookText, ChevronRight, BookOpen } from 'lucide-react';
+import Hero from './Hero';
+import { motion } from 'framer-motion';
+
+const Home = ({ selectedCity, t, language }) => {
+    const features = [
+        { path: '/prayers', labelKey: 'prayer_times', descKey: 'desc_prayers', icon: Sunrise, color: '#10B981' }, // Emerald
+        { path: '/calendar', labelKey: 'ramadan_calendar', descKey: 'desc_calendar', icon: Calendar, color: '#F59E0B' }, // Amber
+        { path: '/quran', labelKey: 'quran_explorer', descKey: 'desc_quran', icon: Quote, color: '#D4AF37' }, // Gold
+        { path: '/khatam', labelKey: 'khatam_challenge', descKey: 'khatam_desc', icon: BookOpen, color: '#A855F7' }, // Purple
+        { path: '/dua', labelKey: 'daily_dua', descKey: 'desc_dua', icon: Book, color: '#06B6D4' }, // Cyan
+        { path: '/challenges', labelKey: 'challenges', descKey: 'desc_challenges', icon: Trophy, color: '#EF4444' }, // Rose
+        { path: '/names', labelKey: 'names_allah', descKey: 'desc_names', icon: Heart, color: '#EC4899' }, // Pink
+        { path: '/tasbih', labelKey: 'tasbih', descKey: 'desc_tasbih', icon: Fingerprint, color: '#D4AF37' }, // Gold
+        { path: '/journal', labelKey: 'journal', descKey: 'desc_journal', icon: BookText, color: '#6366F1' }, // Indigo (soft)
+        { path: '/game', labelKey: 'quest', descKey: 'desc_quest', icon: Gamepad2, color: '#14B8A6' }, // Teal
+    ];
+
+    return (
+        <div>
+            <Hero selectedCity={selectedCity} t={t} />
+
+            <div className="container" style={{ padding: '6rem 2rem' }}>
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.2 }}
+                    style={{
+                        display: 'grid',
+                        gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
+                        gap: '2.5rem'
+                    }}
+                >
+                    {features.map((feature, idx) => (
+                        <Link to={feature.path} key={idx} style={{ textDecoration: 'none' }}>
+                            <motion.div
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: 0.1 * idx }}
+                                whileHover={{
+                                    y: -15,
+                                    scale: 1.03,
+                                    rotateZ: 0.5,
+                                    borderColor: 'rgba(212, 175, 55, 0.4)',
+                                    boxShadow: '0 40px 100px rgba(0,0,0,0.7), 0 0 30px rgba(212, 175, 55, 0.15)',
+                                    background: 'linear-gradient(135deg, rgba(40, 50, 70, 0.5) 0%, rgba(20, 30, 50, 0.7) 100%)'
+                                }}
+                                whileTap={{ scale: 0.94, y: -5, boxShadow: '0 10px 20px rgba(0,0,0,0.4)' }}
+                                style={{
+                                    padding: '3rem 2rem',
+                                    borderRadius: '35px',
+                                    height: '100%',
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    alignItems: 'center',
+                                    textAlign: 'center',
+                                    gap: '1.5rem',
+                                    border: '1px solid rgba(255,255,255,0.05)',
+                                    background: 'linear-gradient(135deg, rgba(30, 41, 59, 0.4) 0%, rgba(15, 23, 42, 0.6) 100%)',
+                                    backdropFilter: 'blur(25px)',
+                                    transition: 'border-color 0.3s ease, background 0.3s ease',
+                                    position: 'relative',
+                                    overflow: 'hidden',
+                                    cursor: 'pointer'
+                                }}
+                            >
+                                {/* Subtle internal glow */}
+                                <div style={{
+                                    position: 'absolute',
+                                    top: '-20%',
+                                    right: '-20%',
+                                    width: '150px',
+                                    height: '150px',
+                                    background: `radial-gradient(circle, ${feature.color}15 0%, transparent 70%)`,
+                                    pointerEvents: 'none'
+                                }} />
+
+                                <div style={{
+                                    width: '70px', height: '70px',
+                                    borderRadius: '22px',
+                                    background: `linear-gradient(135deg, ${feature.color}20 0%, ${feature.color}10 100%)`,
+                                    color: feature.color,
+                                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                    marginBottom: '0.5rem',
+                                    border: `1px solid ${feature.color}30`,
+                                    boxShadow: `0 10px 20px ${feature.color}10`
+                                }}>
+                                    <feature.icon size={32} />
+                                </div>
+                                <h3 style={{
+                                    fontSize: language === 'ku' ? '1.5rem' : '1.75rem',
+                                    fontWeight: '800',
+                                    color: 'white',
+                                    fontFamily: language === 'ku' ? 'var(--font-kurdish)' : 'var(--font-display)',
+                                    letterSpacing: language === 'ku' ? '0' : '-0.5px'
+                                }}>
+                                    {t[feature.labelKey]}
+                                </h3>
+                                <p style={{
+                                    color: 'var(--text-dim)',
+                                    lineHeight: '1.8',
+                                    fontSize: '1.05rem',
+                                    maxWidth: '260px',
+                                    fontFamily: language === 'ku' ? 'var(--font-kurdish)' : 'var(--font-body)'
+                                }}>
+                                    {t[feature.descKey]}
+                                </p>
+
+                                <div style={{
+                                    marginTop: 'auto',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '0.5rem',
+                                    color: 'var(--primary)',
+                                    fontWeight: '700',
+                                    fontSize: '0.9rem',
+                                    textTransform: 'uppercase',
+                                    letterSpacing: '1px'
+                                }}>
+                                    {language === 'ku' ? 'زیاتر ببینە' : 'Explore'}
+                                    <ChevronRight size={16} />
+                                </div>
+                            </motion.div>
+                        </Link>
+                    ))}
+                </motion.div>
+            </div>
+        </div>
+    );
+};
+
+export default Home;

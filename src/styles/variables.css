@@ -1,0 +1,17 @@
+:root {
+    --primary: #D4AF37;
+    /* Gold */
+    --primary-glow: rgba(212, 175, 55, 0.3);
+    --secondary: #0F172A;
+    /* Deep Navy */
+    --accent: #10B981;
+    /* Emerald */
+    --bg-dark: #020617;
+    --surface: rgba(255, 255, 255, 0.05);
+    --surface-border: rgba(255, 255, 255, 0.1);
+    --text-white: #F8FAFC;
+    --text-dim: #94A3B8;
+
+    --font-display: 'Playfair Display', serif;
+    --font-body: 'Inter', system-ui, sans-serif;
+}
