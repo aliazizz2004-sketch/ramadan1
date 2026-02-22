@@ -70,7 +70,14 @@ export const translations = {
         after_isha: "After Isha",
         pages_to_read: "Pages to read",
         day_progress: "Day Progress",
-        completion: "Total Completion"
+        total_completion: "Total Completion",
+        total_pages_label: "Total Pages",
+        daily_pages_label: "Daily Pages",
+        per_prayer_label: "Per Prayer",
+        pages_unit: "PAGES",
+        click_to_read: "Click to Read 4 Pages",
+        khatam_footer_1: "Reading 20 pages a day completes the entire Quran (604 pages) in 30 days.",
+        khatam_footer_2: "May your effort be blessed."
     },
     ku: {
         title: "ڕەمەزانت پیرۆز",
@@ -143,6 +150,13 @@ export const translations = {
         after_isha: "دوای عیشا",
         pages_to_read: "لاپەڕەکان بۆ خوێندنەوە",
         day_progress: "بەرەوپێشچوونی ئەمڕۆ",
-        completion: "کۆی گشتی خەتم"
+        total_completion: "کۆی گشتی خەتم",
+        total_pages_label: "کۆی گشتی لاپەڕەکان",
+        daily_pages_label: "لاپەڕەکانی ڕۆژ",
+        per_prayer_label: "بۆ هەر نوێژێک",
+        pages_unit: "لاپەڕە",
+        click_to_read: "بۆ خوێندنەوەی ٤ لاپەڕە کرتە بکە",
+        khatam_footer_1: "خوێندنەوەی ٢٠ لاپەڕە لە ڕۆژێکدا قورئانی پیرۆز (٦٠٤ لاپەڕە) لە ٣٠ ڕۆژدا خەتم دەکات.",
+        khatam_footer_2: "هیوادارین خودا ئەم ماندووبوونەت لێ قبوڵ بکات."
     }
 };

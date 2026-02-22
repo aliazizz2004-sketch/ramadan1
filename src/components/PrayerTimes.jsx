@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Clock, MapPin, Calendar, Sun, Moon, Cloud, Sunrise, Sunset, ChevronDown } from 'lucide-react';
+import { Clock, MapPin, Calendar, Sun, Moon, Cloud, Sunrise, Sunset, ChevronDown, ChevronLeft, ChevronRight } from 'lucide-react';
 
 const cities = {
     Erbil: {
@@ -37,6 +37,7 @@ const PrayerTimes = ({ selectedCity, setSelectedCity, language }) => {
     const [gregorianDate, setGregorianDate] = useState('');
     const [calculatedTimes, setCalculatedTimes] = useState([]);
     const [showSchedule, setShowSchedule] = useState(false);
+    const [viewDate, setViewDate] = useState(new Date());
 
     useEffect(() => {
         const timer = setInterval(() => setCurrentTime(new Date()), 1000);
@@ -84,30 +85,39 @@ const PrayerTimes = ({ selectedCity, setSelectedCity, language }) => {
         ];
     };
 
-    const generate30DaySchedule = () => {
+    const generateMonthSchedule = () => {
         const schedule = [];
-        const today = new Date();
+        const year = viewDate.getFullYear();
+        const month = viewDate.getMonth();
+        const daysInMonth = new Date(year, month + 1, 0).getDate();
 
         const kuMonths = ['کانوونی دووەم', 'شوبات', 'ئازار', 'نیسان', 'ئایار', 'حوزەیران', 'تەممووز', 'ئاب', 'ئەیلوول', 'تشرینی یەکەم', 'تشرینی دووەم', 'کانوونی یەکەم'];
         const kuDays = ['یەکشەممە', 'دووشەممە', 'سێشەممە', 'چوارشەممە', 'پێنجشەممە', 'هەینی', 'شەممە'];
 
-        for (let i = 0; i < 30; i++) {
-            const date = new Date(today);
-            date.setDate(today.getDate() + i);
+        for (let i = 1; i <= daysInMonth; i++) {
+            const date = new Date(year, month, i);
             const times = calculateForDate(date, selectedCity);
 
-            // Manual Kurdish formatting for 100% reliability
-            const dayNum = date.getDate();
-            const monthKu = kuMonths[date.getMonth()];
-            const dayKu = kuDays[date.getDay()];
-
             schedule.push({
-                date: `${dayNum}ی ${monthKu}`,
-                dayName: dayKu,
+                dayNum: i,
+                monthKu: kuMonths[month],
+                dayName: kuDays[date.getDay()],
                 times
             });
         }
         return schedule;
+    };
+
+    const nextMonth = () => {
+        const next = new Date(viewDate);
+        next.setMonth(next.getMonth() + 1);
+        setViewDate(next);
+    };
+
+    const prevMonth = () => {
+        const prev = new Date(viewDate);
+        prev.setMonth(prev.getMonth() - 1);
+        setViewDate(prev);
     };
 
     return (
@@ -238,7 +248,6 @@ const PrayerTimes = ({ selectedCity, setSelectedCity, language }) => {
                             );
                         })()}
 
-                        {/* Full Month Schedule Button - Moved here */}
                         <motion.button
                             whileHover={{ scale: 1.02 }}
                             whileTap={{ scale: 0.98 }}
@@ -272,32 +281,24 @@ const PrayerTimes = ({ selectedCity, setSelectedCity, language }) => {
                 {/* Right Side: Grid of Times */}
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1.5rem' }}>
                     {calculatedTimes.map((prayer, index) => {
-                        // Detect if this is the current active prayer
                         const now = new Date();
-                        const [timeStr, modifier] = prayer.time.split(' ');
-                        let [hours, minutes] = timeStr.split(':').map(Number);
-                        if (modifier === 'PM' && hours < 12) hours += 12;
-                        if (modifier === 'AM' && hours === 12) hours = 0;
 
-                        const prayerDate = new Date();
-                        prayerDate.setHours(hours, minutes, 0, 0);
-
-                        // Basic logic: If now is after this prayer and before next, or just the next upcoming
-                        // To keep it simple and visual, let's find the 'Next' prayer as active
-                        // Or find the one that matches the current range.
-
-                        // Find the next prayer in the sequence
-                        const nextPrayer = calculatedTimes.find(p => {
-                            const [pTime, pMod] = p.time.split(' ');
-                            let [pHours, pMins] = pTime.split(':').map(Number);
-                            if (pMod === 'PM' && pHours < 12) pHours += 12;
-                            if (pMod === 'AM' && pHours === 12) pHours = 0;
+                        // Helper to get Date object from prayer time string
+                        const getPrayerDate = (pTime) => {
+                            const [timeStr, modifier] = pTime.split(' ');
+                            let [hours, minutes] = timeStr.split(':').map(Number);
+                            if (modifier === 'PM' && hours < 12) hours += 12;
+                            if (modifier === 'AM' && hours === 12) hours = 0;
                             const d = new Date();
-                            d.setHours(pHours, pMins, 0, 0);
-                            return d > now;
-                        }) || calculatedTimes[0]; // If all passed, it's Fajr tomorrow
+                            d.setHours(hours, minutes, 0, 0);
+                            return d;
+                        };
 
-                        const isActive = prayer.id === (nextPrayer?.id);
+                        // Find the next upcoming prayer
+                        const nextPrayer = calculatedTimes.find(p => getPrayerDate(p.time) > now)
+                            || calculatedTimes[0]; // If all passed, it's Fajr tomorrow
+
+                        const isActive = prayer.id === nextPrayer?.id;
 
                         return (
                             <motion.div
@@ -311,56 +312,95 @@ const PrayerTimes = ({ selectedCity, setSelectedCity, language }) => {
                                     textAlign: 'center',
                                     position: 'relative',
                                     border: isActive ? '2px solid var(--primary)' : '1px solid var(--surface-border)',
-                                    background: isActive ? 'linear-gradient(135deg, rgba(212, 175, 55, 0.15) 0%, rgba(15, 23, 42, 0.8) 100%)' : 'rgba(255,255,255,0.03)',
-                                    boxShadow: isActive ? '0 0 30px rgba(212, 175, 55, 0.2)' : 'none',
-                                    transition: 'all 0.5s cubic-bezier(0.4, 0, 0.2, 1)'
+                                    background: isActive
+                                        ? 'linear-gradient(135deg, rgba(212, 175, 55, 0.2) 0%, rgba(15, 23, 42, 0.9) 100%)'
+                                        : 'rgba(255,255,255,0.03)',
+                                    boxShadow: isActive ? '0 0 40px rgba(212, 175, 55, 0.25)' : 'none',
+                                    transition: 'all 0.5s cubic-bezier(0.4, 0, 0.2, 1)',
+                                    overflow: 'hidden'
                                 }}
                             >
                                 {isActive && (
-                                    <motion.div
-                                        animate={{ opacity: [0.5, 1, 0.5] }}
-                                        transition={{ duration: 2, repeat: Infinity }}
-                                        style={{
-                                            position: 'absolute',
-                                            top: '10px',
-                                            right: '10px',
-                                            fontSize: '0.65rem',
-                                            background: 'var(--primary)',
-                                            color: 'black',
-                                            padding: '2px 8px',
-                                            borderRadius: '20px',
-                                            fontWeight: 'bold',
-                                            textTransform: 'uppercase',
-                                            letterSpacing: '1px'
-                                        }}
-                                    >
-                                        Next
-                                    </motion.div>
+                                    <>
+                                        {/* Animated Background Pulse */}
+                                        <motion.div
+                                            animate={{
+                                                opacity: [0.1, 0.3, 0.1],
+                                                scale: [1, 1.05, 1]
+                                            }}
+                                            transition={{ duration: 3, repeat: Infinity }}
+                                            style={{
+                                                position: 'absolute',
+                                                top: 0, left: 0, right: 0, bottom: 0,
+                                                background: 'var(--primary)',
+                                                zIndex: 0,
+                                                pointerEvents: 'none'
+                                            }}
+                                        />
+
+                                        <motion.div
+                                            initial={{ x: 50, opacity: 0 }}
+                                            animate={{ x: 0, opacity: 1 }}
+                                            style={{
+                                                position: 'absolute',
+                                                top: '12px',
+                                                right: '12px',
+                                                fontSize: '0.7rem',
+                                                background: 'var(--primary)',
+                                                color: 'black',
+                                                padding: '4px 12px',
+                                                borderRadius: '20px',
+                                                fontWeight: '900',
+                                                textTransform: 'uppercase',
+                                                letterSpacing: '2px',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                gap: '6px',
+                                                zIndex: 2,
+                                                boxShadow: '0 0 15px var(--primary-glow)'
+                                            }}
+                                        >
+                                            <motion.span
+                                                animate={{ opacity: [1, 0.4, 1] }}
+                                                transition={{ duration: 1.5, repeat: Infinity }}
+                                                style={{ width: '6px', height: '6px', background: 'black', borderRadius: '50%' }}
+                                            />
+                                            {language === 'ku' ? 'دواتر' : 'NEXT'}
+                                        </motion.div>
+                                    </>
                                 )}
+
                                 <div style={{
                                     color: isActive ? 'var(--primary)' : 'rgba(255,255,255,0.4)',
                                     marginBottom: '1rem',
                                     display: 'flex',
                                     justifyContent: 'center',
-                                    transform: isActive ? 'scale(1.2)' : 'scale(1)',
-                                    transition: 'transform 0.3s ease'
+                                    transform: isActive ? 'scale(1.25)' : 'scale(1)',
+                                    transition: 'transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
+                                    position: 'relative',
+                                    zIndex: 1
                                 }}>
                                     {prayer.icon}
                                 </div>
                                 <div style={{
-                                    fontSize: '0.9rem',
+                                    fontSize: '1rem',
                                     color: isActive ? 'white' : 'var(--text-dim)',
                                     marginBottom: '0.75rem',
-                                    fontWeight: isActive ? '600' : 'normal'
+                                    fontWeight: isActive ? '800' : 'normal',
+                                    position: 'relative',
+                                    zIndex: 1,
+                                    letterSpacing: isActive ? '1px' : '0px'
                                 }}>
                                     {prayer.label}
                                 </div>
                                 <div style={{
-                                    fontSize: '1.6rem',
+                                    fontSize: '1.8rem',
                                     fontWeight: '900',
                                     color: isActive ? 'var(--primary)' : 'white',
                                     fontFamily: 'var(--font-kurdish)',
-                                    textShadow: isActive ? '0 0 10px rgba(212, 175, 55, 0.3)' : 'none'
+                                    textShadow: isActive ? '0 0 15px rgba(212, 175, 55, 0.5)' : 'none',
+                                    position: 'relative',
+                                    zIndex: 1
                                 }}>
                                     {prayer.time}
                                 </div>
@@ -370,7 +410,7 @@ const PrayerTimes = ({ selectedCity, setSelectedCity, language }) => {
                 </div>
             </div>
 
-            {/* 30-Day Schedule Modal - Redesigned */}
+            {/* 30-Day Schedule Modal - Redesigned as a single schedule table */}
             <AnimatePresence>
                 {showSchedule && (
                     <motion.div
@@ -383,115 +423,98 @@ const PrayerTimes = ({ selectedCity, setSelectedCity, language }) => {
                             left: 0,
                             width: '100%',
                             height: '100%',
-                            background: 'rgba(2, 6, 23, 0.95)',
+                            background: 'rgba(2, 6, 23, 0.98)',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
-                            zIndex: 1000,
+                            zIndex: 3000,
                             padding: '1rem'
                         }}
                         onClick={() => setShowSchedule(false)}
                     >
                         <motion.div
-                            initial={{ scale: 0.9, y: 50, opacity: 0 }}
-                            animate={{ scale: 1, y: 0, opacity: 1 }}
-                            exit={{ scale: 0.9, y: 50, opacity: 0 }}
+                            initial={{ scale: 0.95, opacity: 0 }}
+                            animate={{ scale: 1, opacity: 1 }}
+                            exit={{ scale: 0.95, opacity: 0 }}
                             className="glass"
                             style={{
                                 width: '100%',
-                                maxWidth: '1200px',
+                                maxWidth: '1000px',
                                 maxHeight: '90vh',
-                                padding: '3rem',
+                                padding: '2.5rem',
                                 overflowY: 'auto',
                                 position: 'relative',
-                                background: 'linear-gradient(135deg, rgba(30, 41, 59, 0.9), rgba(15, 23, 42, 0.9))',
-                                border: '1px solid rgba(212, 175, 55, 0.2)',
-                                scrollbarWidth: 'thin',
-                                scrollbarColor: 'var(--primary) transparent'
+                                background: '#0f172a',
+                                border: '1px solid var(--primary)',
+                                direction: 'rtl'
                             }}
                             onClick={(e) => e.stopPropagation()}
                         >
-                            <button
-                                onClick={() => setShowSchedule(false)}
-                                style={{
-                                    position: 'absolute',
-                                    top: '2rem',
-                                    right: '2rem',
-                                    background: 'rgba(255,255,255,0.05)',
-                                    border: '1px solid var(--surface-border)',
-                                    color: 'white',
-                                    cursor: 'pointer',
-                                    width: '40px',
-                                    height: '40px',
-                                    borderRadius: '50%',
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                    transition: 'all 0.3s ease'
-                                }}
-                                onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.1)'}
-                                onMouseLeave={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.05)'}
-                            >
-                                ✕
-                            </button>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2.5rem' }}>
+                                <button
+                                    onClick={() => setShowSchedule(false)}
+                                    style={{ background: 'rgba(255,255,255,0.1)', border: 'none', color: 'white', cursor: 'pointer', padding: '0.5rem 1rem', borderRadius: '8px' }}
+                                >
+                                    داخستن ×
+                                </button>
 
-                            <h2 style={{ fontSize: '2.5rem', marginBottom: '3rem', color: 'var(--primary)', textAlign: 'center', fontFamily: 'var(--font-display)' }}>
-                                خشتەی کاتەکانی بانگ - {cities[selectedCity].name}
-                            </h2>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '2rem' }}>
+                                    <button onClick={prevMonth} style={{ background: 'transparent', border: '1px solid var(--primary)', color: 'var(--primary)', padding: '0.6rem', borderRadius: '12px', cursor: 'pointer', display: 'flex', alignItems: 'center', transition: 'all 0.3s' }} onMouseEnter={e => e.currentTarget.style.background = 'rgba(212,175,55,0.1)'} onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
+                                        <ChevronRight size={22} />
+                                    </button>
+                                    <h2 style={{ fontSize: '1.8rem', color: 'var(--primary)', margin: 0, fontWeight: 'bold' }}>
+                                        خشتەی {viewDate.toLocaleString('ckb-IQ', { month: 'long', year: 'numeric' })} - {cities[selectedCity].name}
+                                    </h2>
+                                    <button onClick={nextMonth} style={{ background: 'transparent', border: '1px solid var(--primary)', color: 'var(--primary)', padding: '0.6rem', borderRadius: '12px', cursor: 'pointer', display: 'flex', alignItems: 'center', transition: 'all 0.3s' }} onMouseEnter={e => e.currentTarget.style.background = 'rgba(212,175,55,0.1)'} onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
+                                        <ChevronLeft size={22} />
+                                    </button>
+                                </div>
+                                <div style={{ width: '80px' }}></div>
+                            </div>
 
-                            <div style={{
-                                display: 'grid',
-                                gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
-                                gap: '2rem'
-                            }}>
-                                {generate30DaySchedule().map((day, idx) => (
-                                    <motion.div
-                                        key={idx}
-                                        initial={{ opacity: 0, scale: 0.9 }}
-                                        animate={{ opacity: 1, scale: 1 }}
-                                        transition={{ delay: Math.min(idx * 0.03, 1) }}
-                                        style={{
-                                            background: 'rgba(255,255,255,0.03)',
-                                            borderRadius: '20px',
-                                            padding: '1.5rem',
-                                            border: '1px solid rgba(255,255,255,0.05)',
-                                            transition: 'all 0.3s ease'
-                                        }}
-                                        whileHover={{ y: -5, background: 'rgba(212, 175, 55, 0.05)', borderColor: 'rgba(212, 175, 55, 0.2)' }}
-                                    >
-                                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem', paddingBottom: '1rem', borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
-                                            <div style={{ fontSize: '1rem', color: 'rgba(255,255,255,0.5)' }}>{day.date}</div>
-                                            <div style={{ fontWeight: 'bold', fontSize: '1.2rem', color: 'var(--primary)' }}>{day.dayName}</div>
-                                        </div>
-
-                                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1rem' }}>
-                                            {day.times.map(t => (
-                                                <div key={t.id} style={{
-                                                    textAlign: 'center',
-                                                    padding: '1rem 0.5rem',
-                                                    background: 'rgba(0,0,0,0.2)',
-                                                    borderRadius: '16px',
-                                                    border: '1px solid rgba(255,255,255,0.03)'
-                                                }}>
-                                                    <div style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.4)', marginBottom: '0.5rem', fontWeight: '500' }}>{t.label}</div>
-                                                    <div style={{
-                                                        fontSize: '1.1rem',
-                                                        fontWeight: '700',
-                                                        color: 'white',
-                                                        fontFamily: 'var(--font-kurdish)',
-                                                        letterSpacing: '0.5px'
-                                                    }}>{t.time}</div>
-                                                </div>
-                                            ))}
-                                        </div>
-                                    </motion.div>
-                                ))}
+                            <div style={{ overflowX: 'auto', maxHeight: '70vh', borderRadius: '12px' }}>
+                                <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'center', fontFamily: 'var(--font-kurdish)' }}>
+                                    <thead style={{ position: 'sticky', top: 0, background: '#0f172a', zIndex: 10 }}>
+                                        <tr style={{ borderBottom: '2px solid var(--primary)', color: 'var(--primary)' }}>
+                                            <th style={{ padding: '1.25rem', fontWeight: '800', background: 'rgba(212, 175, 55, 0.05)' }}>ڕۆژ</th>
+                                            <th style={{ padding: '1.25rem', fontWeight: '800', background: 'rgba(212, 175, 55, 0.05)' }}>ڕێکەوت</th>
+                                            <th style={{ padding: '1.25rem', background: 'rgba(0,0,0,0.2)' }}>بەیانی</th>
+                                            <th style={{ padding: '1.25rem', background: 'rgba(0,0,0,0.2)' }}>ڕۆژھەڵات</th>
+                                            <th style={{ padding: '1.25rem', background: 'rgba(0,0,0,0.2)' }}>نیوەڕۆ</th>
+                                            <th style={{ padding: '1.25rem', background: 'rgba(0,0,0,0.2)' }}>عەسر</th>
+                                            <th style={{ padding: '1.25rem', background: 'rgba(212, 175, 55, 0.05)' }}>شێوان</th>
+                                            <th style={{ padding: '1.25rem', background: 'rgba(0,0,0,0.2)' }}>خەوتنان</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {generateMonthSchedule().map((day, idx) => {
+                                            const isToday = new Date().toDateString() === new Date(viewDate.getFullYear(), viewDate.getMonth(), day.dayNum).toDateString();
+                                            return (
+                                                <tr key={idx} style={{
+                                                    borderBottom: '1px solid rgba(255,255,255,0.05)',
+                                                    background: isToday ? 'rgba(212, 175, 55, 0.15)' : (idx % 2 === 0 ? 'rgba(255,255,255,0.01)' : 'transparent'),
+                                                    color: isToday ? 'var(--primary)' : 'white',
+                                                    transition: 'all 0.2s ease'
+                                                }}
+                                                    onMouseEnter={e => { if (!isToday) e.currentTarget.style.background = 'rgba(255,255,255,0.05)'; }}
+                                                    onMouseLeave={e => { if (!isToday) e.currentTarget.style.background = idx % 2 === 0 ? 'rgba(255,255,255,0.01)' : 'transparent'; }}
+                                                >
+                                                    <td style={{ padding: '1rem', fontWeight: 'bold' }}>{day.dayName}</td>
+                                                    <td style={{ padding: '1rem', whiteSpace: 'nowrap' }}>{day.dayNum}ی {day.monthKu}</td>
+                                                    {day.times.map(t => (
+                                                        <td key={t.id} style={{ padding: '1rem', fontWeight: t.id === 'maghrib' ? '800' : 'normal' }}>{t.time}</td>
+                                                    ))}
+                                                </tr>
+                                            );
+                                        })}
+                                    </tbody>
+                                </table>
                             </div>
                         </motion.div>
                     </motion.div>
                 )}
-            </AnimatePresence >
-        </section >
+            </AnimatePresence>
+        </section>
     );
 };
 

@@ -12,7 +12,7 @@ import DailyDua from './components/DailyDua';
 import QuranExplorer from './components/QuranExplorer';
 import Tracker from './components/Tracker';
 import Challenges from './components/Challenges';
-import NamesOfAllah from './components/Game/NamesOfAllah';
+import NamesOfAllah from './components/NamesOfAllah';
 import Tasbih from './components/Tasbih';
 import Journal from './components/Journal';
 import ImanQuest from './components/Game/ImanQuest';
@@ -51,7 +51,7 @@ function App() {
   });
 
   return (
-    <div className="App" style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', background: 'var(--bg)' }}>
+    <div className="App" style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', background: 'var(--bg-dark)' }}>
       <AnimatePresence mode="wait">
         {isLoading ? (
           <LoadingScreen key="loader" />
