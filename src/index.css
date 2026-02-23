@@ -100,3 +100,804 @@ h3 {
 ::-webkit-scrollbar-thumb:hover {
   background: var(--primary);
 }
+
+/* Mobile Optimizations - Applied only on smaller screens to not affect PC */
+@media (max-width: 1024px) {
+  .container {
+    padding: 0 1.5rem;
+  }
+
+  /* Quran Explorer Tablet Fix */
+  div[style*="height: 900px"] {
+    height: auto !important;
+    min-height: 100vh;
+    flex-direction: column !important;
+  }
+
+  div[style*="width: 380px"] {
+    width: 100% !important;
+    border-right: none !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+    max-height: 400px;
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 0 1rem !important;
+  }
+
+  main {
+    padding-top: 80px !important;
+  }
+
+  /* HOME PAGE: Grid with 2 columns on mobile */
+  .container>div>div[style*="grid-template-columns"] {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 0.75rem !important;
+  }
+
+  /* Adjust Home Feature Cards for 2-column layout */
+  .container>div>div[style*="grid-template-columns"]>a>div {
+    padding: 1.25rem 0.75rem !important;
+    border-radius: 20px !important;
+    gap: 0.5rem !important;
+    flex-direction: column !important;
+    text-align: center !important;
+    justify-content: center !important;
+  }
+
+  /* Make icons smaller on mobile */
+  div[style*="width: 70px"],
+  div[style*="width: 80px"] {
+    width: 50px !important;
+    height: 50px !important;
+    min-width: 50px !important;
+    border-radius: 15px !important;
+    margin-bottom: 0.25rem !important;
+  }
+
+  /* KHATAMI QURAN: FORCE 4 column grid for days on mobile screen */
+  div[style*="grid-template-columns: repeat(auto-fill, minmax(130px, 1fr))"] {
+    grid-template-columns: repeat(4, 1fr) !important;
+    gap: 0.5rem !important;
+  }
+
+  /* Adjust Day Button Sizing for 4-column layout */
+  div[style*="grid-template-columns: repeat(auto-fill, minmax(130px, 1fr))"]>button {
+    padding: 0.5rem !important;
+    border-radius: 15px !important;
+  }
+
+  /* Adjust Day Number font size for 4-column layout */
+  div[style*="grid-template-columns: repeat(auto-fill, minmax(130px, 1fr))"] span[style*="font-size: 3.5rem"] {
+    font-size: 2.2rem !important;
+  }
+
+  /* Adjust Day Label font size */
+  div[style*="grid-template-columns: repeat(auto-fill, minmax(130px, 1fr))"] span[style*="font-size: 0.85rem"] {
+    font-size: 0.6rem !important;
+  }
+
+  /* Hide progress dots in 4-column mobile view to keep it clean */
+  div[style*="grid-template-columns: repeat(auto-fill, minmax(130px, 1fr))"] div[style*="display: flex; gap: 6px"] {
+    display: none !important;
+  }
+
+  /* Adjust SVG size inside containers */
+  div[style*="width: 50px"] svg {
+    width: 22px !important;
+    height: 22px !important;
+  }
+
+  /* Card Titles */
+  .container>div>div[style*="grid-template-columns"] h3 {
+    font-size: 1.05rem !important;
+    margin-bottom: 0.2rem !important;
+  }
+
+  /* Card Descriptions - truncate to save space on mobile grid */
+  .container>div>div[style*="grid-template-columns"] p {
+    font-size: 0.75rem !important;
+    line-height: 1.4 !important;
+    display: -webkit-box !important;
+    -webkit-line-clamp: 2 !important;
+    -webkit-box-orient: vertical !important;
+    overflow: hidden !important;
+    max-width: 100% !important;
+    margin: 0 auto !important;
+    opacity: 0.7 !important;
+  }
+
+  /* Hide "Explore" helper text on mobile to keep it clean */
+  div[style*="text-transform: uppercase; letter-spacing: 1px"] {
+    display: none !important;
+  }
+
+  /* Hide chevron on newest cards */
+  div[style*="transform: rotate(180deg)"],
+  div[style*="padding: 10px"] {
+    display: none !important;
+  }
+
+  /* Smaller New Badge */
+  div[style*="top: 15px"][style*="background:"]:not([style*="rgba"]) {
+    font-size: 0.55rem !important;
+    padding: 2px 8px !important;
+    top: 10px !important;
+  }
+
+  /* Hero Section Mobile Polish */
+  #hero {
+    padding: 3rem 1rem !important;
+    min-height: auto !important;
+    padding-top: 6rem !important;
+  }
+
+  #hero h1 {
+    font-size: 2.75rem !important;
+  }
+
+  #hero div[style*="display: flex; gap: clamp"] {
+    gap: 0.75rem !important;
+  }
+
+  #hero div[style*="min-width: clamp"] {
+    min-width: 75px !important;
+    padding: 0.75rem !important;
+  }
+
+  #hero div[style*="font-size: 2.22rem"],
+  #hero div[style*="font-size: 2.2rem"] {
+    font-size: 1.5rem !important;
+  }
+
+  /* Prayer Times Cards Grid */
+  #prayer-times div[style*="display: grid; grid-template-columns: repeat(2, 1fr)"] {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 0.75rem !important;
+  }
+
+  #prayer-times .glass {
+    padding: 1rem !important;
+  }
+
+  /* Prayer label/time text adjustment */
+  #prayer-times div[style*="font-size: 1.8rem"] {
+    font-size: 1.2rem !important;
+  }
+
+  #prayer-times div[style*="font-size: 1rem"] {
+    font-size: 0.8rem !important;
+  }
+
+  /* Glass containers padding reduction for small screens */
+  .glass {
+    padding: 1.25rem !important;
+  }
+
+  /* Modal/Schedule Polish */
+  div[style*="max-width: 1000px"] {
+    padding: 1rem !important;
+    width: 98% !important;
+  }
+
+  /* ========== KHATAMI QURAN PRAYER MODAL - MOBILE FIX ========== */
+
+  /* Modal container: reduce padding & border-radius */
+  div[style*="maxWidth: 600px"][style*="borderRadius: 55px"],
+  div[style*="max-width: 600px"][style*="border-radius: 55px"] {
+    padding: 1.5rem 1.25rem !important;
+    border-radius: 25px !important;
+  }
+
+  /* Day number inside modal */
+  div[style*="maxWidth: 600px"] h1[style*="font-size: 5.5rem"],
+  div[style*="max-width: 600px"] h1[style*="font-size: 5.5rem"] {
+    font-size: 3rem !important;
+  }
+
+  /* "Ramadan Challenge" subtitle */
+  div[style*="maxWidth: 600px"] p[style*="font-size"],
+  div[style*="max-width: 600px"] p[style*="font-size"] {
+    font-size: 1.2rem !important;
+    margin-top: 0.5rem !important;
+  }
+
+  /* Header section margin inside modal */
+  div[style*="maxWidth: 600px"] div[style*="textAlign: center; marginBottom: 2rem"],
+  div[style*="max-width: 600px"] div[style*="text-align: center; margin-bottom: 2rem"] {
+    margin-bottom: 1rem !important;
+  }
+
+  /* Prayer buttons - make compact */
+  div[style*="display: flex; flexDirection: column; gap: 1rem"],
+  div[style*="display: flex; flex-direction: column; gap: 1rem"] {
+    gap: 0.5rem !important;
+  }
+
+  /* Each prayer button row */
+  div[style*="display: flex; flexDirection: column"]>button[style*="padding: 1.2rem 2rem"],
+  div[style*="display: flex; flex-direction: column"]>button[style*="padding: 1.2rem 2rem"] {
+    padding: 0.7rem 1rem !important;
+    border-radius: 16px !important;
+    gap: 0.8rem !important;
+  }
+
+  /* Prayer emoji icons */
+  div[style*="display: flex; flexDirection: column"]>button span[style*="font-size: 2.8rem"],
+  div[style*="display: flex; flex-direction: column"]>button span[style*="font-size: 2.8rem"] {
+    font-size: 1.8rem !important;
+  }
+
+  /* Prayer name title */
+  div[style*="display: flex; flexDirection: column"]>button h3[style*="font-size: 1.5rem"],
+  div[style*="display: flex; flex-direction: column"]>button h3[style*="font-size: 1.5rem"] {
+    font-size: 1.05rem !important;
+  }
+
+  /* "4 Sacred Pages" subtitle */
+  div[style*="display: flex; flexDirection: column"]>button p[style*="font-size: 1rem"],
+  div[style*="display: flex; flex-direction: column"]>button p[style*="font-size: 1rem"] {
+    font-size: 0.75rem !important;
+    margin-top: 0.1rem !important;
+  }
+
+  /* Close button inside modal */
+  button[style*="top: 2.5rem; right: 2.5rem"] {
+    top: 1rem !important;
+    right: 1rem !important;
+    padding: 10px !important;
+  }
+
+  /* ========== KHATAMI QURAN HEADER - MOBILE FIX ========== */
+
+  /* Khatam page header */
+  header[style*="marginBottom: 6rem"],
+  header[style*="margin-bottom: 6rem"] {
+    margin-bottom: 2rem !important;
+  }
+
+  /* Khatam page title */
+  header h1[style*="font-size: 4.5rem"] {
+    font-size: 2rem !important;
+    letter-spacing: -1px !important;
+    margin-bottom: 0.5rem !important;
+  }
+
+  /* Percentage display */
+  div[style*="font-size: 4rem"][style*="textShadow"],
+  div[style*="font-size: 4rem"][style*="text-shadow"] {
+    font-size: 2.5rem !important;
+  }
+
+  /* "TOTAL COMPLETION" label */
+  div[style*="letterSpacing: 10px"],
+  div[style*="letter-spacing: 10px"] {
+    letter-spacing: 3px !important;
+    font-size: 0.7rem !important;
+  }
+
+  /* Progress bar container */
+  div[style*="maxWidth: 800px"][style*="margin: 4rem auto"],
+  div[style*="max-width: 800px"][style*="margin: 4rem auto"] {
+    margin-top: 1.5rem !important;
+  }
+
+  /* BookOpen icon in header */
+  header svg[style*="filter: drop-shadow"] {
+    width: 50px !important;
+    height: 50px !important;
+  }
+
+  /* ========== QURAN VIEWER (READING SCREEN) - MOBILE FIX ========== */
+
+  /* Top toolbar: wrap and make compact */
+  div[style*="padding: 1.2rem 2.5rem"][style*="justifyContent: space-between"],
+  div[style*="padding: 1.2rem 2.5rem"][style*="justify-content: space-between"] {
+    padding: 0.6rem 0.75rem !important;
+    flex-wrap: wrap !important;
+    gap: 0.5rem !important;
+  }
+
+  /* Toolbar right side buttons group */
+  div[style*="padding: 1.2rem 2.5rem"]>div[style*="display: flex; gap: 15px"],
+  div[style*="padding: 1.2rem 2.5rem"]>div[style*="display: flex; gap: 15px"] {
+    gap: 6px !important;
+    flex-wrap: wrap !important;
+    justify-content: flex-end !important;
+  }
+
+  /* View mode toggle button - icon only on mobile */
+  div[style*="padding: 1.2rem 2.5rem"] button[style*="padding: 10px 15px"] {
+    padding: 8px !important;
+  }
+
+  /* Hide text in View Mode button on mobile */
+  div[style*="padding: 1.2rem 2.5rem"] button[style*="padding: 10px 15px"]>span {
+    display: none !important;
+  }
+
+  /* Reciter button - shrink */
+  div[style*="padding: 1.2rem 2.5rem"] button[style*="padding: 10px 20px"] {
+    padding: 8px 10px !important;
+    font-size: 0.7rem !important;
+    max-width: 120px !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+  }
+
+  /* Listen/Play button - compact */
+  button[style*="padding: 10px 30px"][style*="minWidth: 140px"],
+  button[style*="padding: 10px 30px"][style*="min-width: 140px"] {
+    padding: 8px 12px !important;
+    min-width: auto !important;
+    font-size: 0.75rem !important;
+    gap: 6px !important;
+  }
+
+  /* Finish button - compact */
+  button[style*="padding: 0.8rem 2rem"][style*="fontSize: 1.1rem"],
+  button[style*="padding: 0.8rem 2rem"][style*="font-size: 1.1rem"] {
+    padding: 8px 14px !important;
+    font-size: 0.85rem !important;
+  }
+
+  /* HIDE the floating info panel (Surah/Juz/Page) on mobile - it covers text */
+  div[style*="position: fixed; right: 20px"][style*="minWidth: 180px"],
+  div[style*="position: fixed; right: 20px"][style*="min-width: 180px"] {
+    display: none !important;
+  }
+
+  /* Bottom cinematic navigation - compact */
+  div[style*="padding: 2.5rem 2rem"][style*="gap: 6rem"] {
+    padding: 0.75rem 0.5rem !important;
+    gap: 0.5rem !important;
+  }
+
+  /* Prev/Next buttons in bottom nav - hide text, icon only */
+  div[style*="padding: 2.5rem 2rem"]>button[style*="padding: 12px 24px"] {
+    padding: 8px 12px !important;
+    font-size: 0.8rem !important;
+  }
+
+  div[style*="padding: 2.5rem 2rem"]>button[style*="padding: 12px 24px"]>span {
+    display: none !important;
+  }
+
+  /* Page number buttons in bottom nav */
+  div[style*="padding: 2.5rem 2rem"] button[style*="width: 44px"] {
+    width: 36px !important;
+    height: 36px !important;
+    font-size: 0.8rem !important;
+    border-radius: 10px !important;
+  }
+
+  /* Page number dots gap */
+  div[style*="padding: 2.5rem 2rem"]>div[style*="display: flex; gap: 12px"] {
+    gap: 6px !important;
+  }
+
+  /* Quran text content - reduce paddings for mobile */
+  div[style*="padding: 2rem 2rem 12rem"] {
+    padding: 1rem 0.5rem 8rem !important;
+  }
+
+  div[style*="padding: 4rem 2rem 12rem"] {
+    padding: 1.5rem 0.5rem 8rem !important;
+  }
+
+  /* Quran text content inner wrapper */
+  div[style*="padding: 0 2rem 15rem"] {
+    padding: 0 0.5rem 8rem !important;
+  }
+
+  div[style*="padding: 5rem 4rem"] {
+    padding: 2rem 1rem !important;
+  }
+
+  /* Arabic text size in reader - cinematic mode */
+  div[style*="fontSize: 2.5rem"][style*="lineHeight: 5.5rem"],
+  div[style*="font-size: 2.5rem"][style*="line-height: 5.5rem"] {
+    font-size: 1.4rem !important;
+    line-height: 3rem !important;
+  }
+
+  /* Individual word spans in cinematic mode */
+  div[style*="fontSize: 2.5rem"] span[style*="fontSize: 2.5rem"],
+  div[style*="font-size: 2.5rem"] span[style*="font-size: 2.5rem"] {
+    font-size: 1.4rem !important;
+  }
+
+  /* Book mode text size */
+  div[style*="fontSize: 1.8rem"][style*="lineHeight: 4rem"],
+  div[style*="font-size: 1.8rem"][style*="line-height: 4rem"] {
+    font-size: 1.2rem !important;
+    line-height: 2.6rem !important;
+  }
+
+  /* Individual word spans in book mode */
+  div[style*="fontSize: 1.8rem"] span[style*="fontSize: 1.8rem"],
+  div[style*="font-size: 1.8rem"] span[style*="font-size: 1.8rem"] {
+    font-size: 1.2rem !important;
+  }
+
+  /* ========== QURAN EXPLORER PAGE - MOBILE REDESIGN ========== */
+
+  /* Header section above the explorer */
+  #quran>div:first-child {
+    margin-bottom: 2rem !important;
+  }
+
+  #quran h2[style*="fontSize: 4.5rem"],
+  #quran h2[style*="font-size: 4.5rem"] {
+    font-size: 2rem !important;
+    letter-spacing: -1px !important;
+  }
+
+  /* Explorer container: stack vertically */
+  .quran-explorer-container {
+    flex-direction: column !important;
+    height: auto !important;
+    min-height: 85vh !important;
+    border-radius: 20px !important;
+  }
+
+  /* Surah Sidebar: overlay on mobile, hidden by default */
+  .quran-sidebar {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    width: 100% !important;
+    z-index: 9999 !important;
+    background: rgba(5, 8, 15, 0.98) !important;
+    backdrop-filter: blur(30px) !important;
+    transform: translateX(-100%) !important;
+    transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    border-right: none !important;
+  }
+
+  .quran-sidebar.quran-sidebar-open {
+    transform: translateX(0) !important;
+  }
+
+  /* Search inside sidebar on mobile */
+  .quran-sidebar>div:first-child {
+    padding: 1.5rem 1rem !important;
+  }
+
+  /* Show the mobile menu button */
+  .quran-mobile-menu-btn {
+    display: flex !important;
+  }
+
+  /* Controls sidebar: horizontal bar at bottom */
+  .quran-controls {
+    width: 100% !important;
+    flex-direction: row !important;
+    padding: 0.75rem !important;
+    gap: 0.5rem !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.05) !important;
+    border-right: none !important;
+    border-left: none !important;
+    border-radius: 0 !important;
+    justify-content: center !important;
+    flex-wrap: nowrap !important;
+  }
+
+  /* Control buttons in horizontal bar */
+  .quran-controls>div {
+    flex-direction: row !important;
+    gap: 0.5rem !important;
+  }
+
+  .quran-controls button[style*="width: 90px"] {
+    width: auto !important;
+    height: auto !important;
+    padding: 0.5rem 0.75rem !important;
+    flex-direction: row !important;
+    gap: 0.3rem !important;
+    border-radius: 12px !important;
+    font-size: 0.7rem !important;
+    min-width: fit-content !important;
+  }
+
+  /* Divider in controls */
+  .quran-controls>div[style*="width: 80%"] {
+    width: 1px !important;
+    height: 30px !important;
+  }
+
+  /* Sticky header: compact on mobile */
+  .quran-main>div:first-child {
+    padding: 1rem 1rem !important;
+  }
+
+  /* Surah name in sticky header */
+  .quran-main h3[style*="fontSize: 3.5rem"],
+  .quran-main h3[style*="font-size: 3.5rem"] {
+    font-size: 1.6rem !important;
+    letter-spacing: -0.5px !important;
+  }
+
+  /* Play/Fullscreen buttons in header */
+  .quran-main button[style*="width: 64px"] {
+    width: 40px !important;
+    height: 40px !important;
+    border-radius: 14px !important;
+  }
+
+  .quran-main button[style*="width: 64px"] svg {
+    width: 20px !important;
+    height: 20px !important;
+  }
+
+  /* Verse content padding */
+  .quran-main div[style*="padding: 6rem 10%"],
+  .quran-main div[style*="padding: 3rem 10%"] {
+    padding: 1.5rem 1rem !important;
+  }
+
+  /* Arabic verse text - ayah view */
+  .quran-main div[style*="fontSize: 3rem"][style*="lineHeight: 2"],
+  .quran-main div[style*="font-size: 3rem"][style*="line-height: 2"] {
+    font-size: 1.6rem !important;
+    line-height: 1.8 !important;
+  }
+
+  /* Verse gap in ayah view */
+  .quran-main div[style*="gap: 8rem"],
+  .quran-main div[style*="gap: 6rem"] {
+    gap: 3rem !important;
+  }
+
+  /* Ayah number diamond button */
+  .quran-main button[style*="width: 60px"][style*="transform: rotate(45deg)"] {
+    width: 40px !important;
+    height: 40px !important;
+  }
+
+  /* Page view text */
+  .quran-main div[style*="fontSize: 1.8rem"][style*="lineHeight: 2.2"],
+  .quran-main div[style*="font-size: 1.8rem"][style*="line-height: 2.2"] {
+    font-size: 1.3rem !important;
+    line-height: 2 !important;
+  }
+
+  /* Tafseer content */
+  .quran-main div[style*="padding: 3.5rem"] {
+    padding: 1.5rem !important;
+    border-radius: 20px !important;
+  }
+
+  .quran-main div[style*="fontSize: 1.5rem"][style*="lineHeight: 2.2"],
+  .quran-main div[style*="font-size: 1.5rem"][style*="line-height: 2.2"] {
+    font-size: 1.1rem !important;
+    line-height: 1.8 !important;
+  }
+
+  .quran-main div[style*="fontSize: 1.4rem"][style*="lineHeight: 2.1"],
+  .quran-main div[style*="font-size: 1.4rem"][style*="line-height: 2.1"] {
+    font-size: 1rem !important;
+    line-height: 1.7 !important;
+  }
+
+  /* Reciter popup on mobile */
+  .quran-controls div[style*="position: fixed"][style*="width: 300px"] {
+    left: 50% !important;
+    right: auto !important;
+    transform: translate(-50%, -50%) !important;
+    width: 85vw !important;
+    max-width: 320px !important;
+  }
+
+  /* Icon in explorer header */
+  #quran div[style*="width: 80px; height: 80px"] {
+    width: 50px !important;
+    height: 50px !important;
+    border-radius: 16px !important;
+    margin-bottom: 1rem !important;
+  }
+
+  #quran div[style*="width: 80px; height: 80px"] svg {
+    width: 22px !important;
+    height: 22px !important;
+  }
+}
+
+@media (max-width: 480px) {
+
+  /* Smaller column layout if needed, but 2 columns usually works */
+  .container>div>div[style*="grid-template-columns"] {
+    gap: 0.5rem !important;
+  }
+
+  #hero h1 {
+    font-size: 2.25rem !important;
+  }
+
+  /* Very small fonts for names in Detail view */
+
+}
+
+/* ==========================================================================
+   URBAN QURAN EXPLORER - MODERN IMMERSIVE DESIGN SYSTEM (FIXED SCREEN)
+   ========================================================================== */
+
+.quran-explorer-root {
+  position: fixed;
+  inset: 0;
+  top: 0;
+  background: radial-gradient(circle at top right, #01040a, #020617);
+  color: #f8fafc;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  z-index: 9999;
+}
+
+.quran-explorer-main {
+  flex: 1;
+  display: flex;
+  position: relative;
+  overflow: hidden;
+  height: 100%;
+}
+
+.quran-sidebar {
+  width: 320px;
+  background: rgba(2, 6, 23, 0.85);
+  backdrop-filter: blur(40px);
+  border-right: 1px solid rgba(212, 175, 55, 0.15);
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 100;
+}
+
+@media (max-width: 768px) {
+  .quran-sidebar {
+    position: absolute;
+    height: 100%;
+    transform: translateX(-100%);
+    width: 300px;
+  }
+
+  .quran-sidebar.mobile-active {
+    transform: translateX(0);
+  }
+
+  .quran-sidebar.rtl {
+    transform: translateX(100%);
+    border-right: none;
+    border-left: 1px solid rgba(212, 175, 55, 0.15);
+  }
+
+  .quran-sidebar.rtl.mobile-active {
+    transform: translateX(0);
+  }
+}
+
+.quran-reading-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background: #05080f;
+  position: relative;
+  overflow: hidden;
+}
+
+.quran-scroll {
+  flex: 1;
+  overflow-y: auto;
+  padding: 2rem;
+  scroll-behavior: smooth;
+}
+
+.quran-scroll::-webkit-scrollbar {
+  width: 4px;
+}
+
+.quran-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.quran-scroll::-webkit-scrollbar-thumb {
+  background: rgba(212, 175, 55, 0.1);
+  border-radius: 10px;
+}
+
+.quran-scroll::-webkit-scrollbar-thumb:hover {
+  background: #D4AF37;
+}
+
+.quran-verse-card {
+  padding: 2.5rem 1.5rem;
+  margin-bottom: 2rem;
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.01);
+  border: 1px solid rgba(255, 255, 255, 0.02);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.quran-verse-card.playing {
+  background: rgba(212, 175, 55, 0.03);
+  border-color: rgba(212, 175, 55, 0.1);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+}
+
+.quran-arabic-text {
+  font-family: 'Amiri', 'Traditional Arabic', serif;
+  font-size: 2.8rem;
+  line-height: 2.4;
+  text-align: center;
+  color: #fff;
+  direction: rtl;
+  margin-bottom: 2rem;
+}
+
+.playing .quran-arabic-text {
+  color: #D4AF37;
+  text-shadow: 0 0 40px rgba(212, 175, 55, 0.3);
+}
+
+.glass-panel {
+  background: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(40px);
+  border: 1px solid rgba(212, 175, 55, 0.1);
+  border-radius: 20px;
+}
+
+.quran-bottom-bar {
+  background: rgba(10, 15, 24, 0.98);
+  backdrop-filter: blur(30px);
+  border-top: 1px solid rgba(212, 175, 55, 0.2);
+  padding: 0.8rem 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  z-index: 200;
+}
+
+.surah-number-badge {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: rgba(212, 175, 55, 0.1);
+  color: #D4AF37;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 0.85rem;
+}
+
+.active .surah-number-badge {
+  background: #D4AF37;
+  color: #000;
+}
+
+/* Animations */
+@keyframes float {
+  0% {
+    transform: translateY(0px);
+  }
+
+  50% {
+    transform: translateY(-10px);
+  }
+
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+.float-anim {
+  animation: float 4s infinite ease-in-out;
+}

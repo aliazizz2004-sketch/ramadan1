@@ -158,6 +158,9 @@ const QuranExplorer = ({ t, language }) => {
     const [isZipping, setIsZipping] = useState(false);
     const [zipProgress, setZipProgress] = useState(0);
     const [sequentialProgress, setSequentialProgress] = useState(null);
+    const [isMobile, setIsMobile] = useState(typeof window !== 'undefined' && window.innerWidth < 768);
+    const [showMobileSidebar, setShowMobileSidebar] = useState(false);
+    const toggleSidebar = () => setShowMobileSidebar(prev => !prev);
     const explorerRef = useRef(null); // For fullscreen
     const containerRef = useRef(null);
     const audioRef = useRef(new Audio());
@@ -489,6 +492,13 @@ const QuranExplorer = ({ t, language }) => {
         return () => document.removeEventListener('fullscreenchange', handleFsChange);
     }, []);
 
+    // Mobile detection
+    useEffect(() => {
+        const handleResize = () => setIsMobile(window.innerWidth < 768);
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
+
     const toggleMainPlay = () => {
         if (isPlaying) {
             audioRef.current.pause();
@@ -605,6 +615,493 @@ const QuranExplorer = ({ t, language }) => {
 
     const direction = language === 'ku' ? 'rtl' : 'ltr';
 
+    // ============ MOBILE LAYOUT ============
+    if (isMobile && !isFullscreen) {
+        return (
+            <section id="quran" ref={explorerRef} style={{
+                direction,
+                background: '#020617',
+                height: '100vh',
+                display: 'flex',
+                flexDirection: 'column',
+                position: 'relative',
+                overflow: 'hidden'
+            }}>
+                {/* Mobile Top Bar */}
+                <div style={{
+                    padding: '0.6rem 0.8rem',
+                    background: 'linear-gradient(to bottom, rgba(15, 23, 42, 0.98), rgba(10, 15, 30, 0.95))',
+                    borderBottom: '1px solid rgba(212, 175, 55, 0.12)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    flexShrink: 0
+                }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+                        <div style={{
+                            width: '32px', height: '32px', borderRadius: '9px',
+                            background: 'linear-gradient(135deg, #D4AF37, #996515)',
+                            display: 'flex', alignItems: 'center', justifyContent: 'center',
+                            color: 'black', boxShadow: '0 4px 12px rgba(212, 175, 55, 0.25)'
+                        }}>
+                            <Book size={16} />
+                        </div>
+                        <h2 style={{ fontSize: '0.95rem', fontWeight: '800', color: 'white', margin: 0 }}>
+                            {t.quran_explorer}
+                        </h2>
+                    </div>
+                    <div style={{ display: 'flex', gap: '0.4rem' }}>
+                        <button
+                            onClick={() => setShowTafseer(!showTafseer)}
+                            style={{
+                                padding: '5px 10px', borderRadius: '8px',
+                                background: showTafseer ? 'var(--primary)' : 'rgba(255,255,255,0.06)',
+                                color: showTafseer ? 'black' : 'var(--primary)',
+                                border: '1px solid rgba(212, 175, 55, 0.2)',
+                                fontSize: '0.65rem', fontWeight: '800', cursor: 'pointer'
+                            }}
+                        >
+                            {language === 'ku' ? 'تەفسیر' : 'Tafseer'}
+                        </button>
+                        <button
+                            onClick={() => setShowDownloadModal(true)}
+                            style={{
+                                padding: '5px 8px', borderRadius: '8px',
+                                background: 'rgba(255,255,255,0.06)',
+                                color: 'var(--primary)',
+                                border: '1px solid rgba(255,255,255,0.08)',
+                                cursor: 'pointer'
+                            }}
+                        >
+                            <Download size={14} />
+                        </button>
+                    </div>
+                </div>
+
+                {/* Mobile Surah Selector + Controls */}
+                <div style={{
+                    padding: '0.5rem 0.8rem',
+                    background: 'rgba(8, 12, 24, 0.95)',
+                    borderBottom: '1px solid rgba(255,255,255,0.04)',
+                    display: 'flex',
+                    gap: '0.4rem',
+                    alignItems: 'center',
+                    flexShrink: 0
+                }}>
+                    <select
+                        value={selectedSurahIndex}
+                        onChange={(e) => setSelectedSurahIndex(parseInt(e.target.value))}
+                        style={{
+                            flex: 1,
+                            padding: '0.5rem 0.6rem',
+                            borderRadius: '10px',
+                            background: 'rgba(212, 175, 55, 0.06)',
+                            border: '1px solid rgba(212, 175, 55, 0.15)',
+                            color: 'white',
+                            fontSize: '0.82rem',
+                            fontWeight: '700',
+                            outline: 'none',
+                            cursor: 'pointer',
+                            direction: 'rtl'
+                        }}
+                    >
+                        {surahInfo.map((s, idx) => (
+                            <option key={s.id} value={idx} style={{ background: '#0f172a', direction: 'rtl' }}>
+                                {s.id}. {s.name[language]} - {s.arabic}
+                            </option>
+                        ))}
+                    </select>
+                    <button
+                        onClick={() => setViewMode(viewMode === 'ayah' ? 'page' : 'ayah')}
+                        style={{
+                            padding: '0.5rem 0.6rem', borderRadius: '10px',
+                            background: 'rgba(255,255,255,0.05)',
+                            border: '1px solid rgba(255,255,255,0.08)',
+                            color: 'var(--primary)', fontSize: '0.65rem',
+                            fontWeight: '800', cursor: 'pointer',
+                            whiteSpace: 'nowrap', display: 'flex', alignItems: 'center', gap: '3px'
+                        }}
+                    >
+                        {viewMode === 'ayah' ? <BookOpen size={12} /> : <ScrollText size={12} />}
+                        {viewMode === 'ayah' ? (language === 'ku' ? 'لاپەڕە' : 'Page') : (language === 'ku' ? 'ئایەت' : 'Ayah')}
+                    </button>
+                    <button
+                        onClick={() => setShowReciterMenu(!showReciterMenu)}
+                        style={{
+                            padding: '0.5rem', borderRadius: '10px',
+                            background: 'rgba(212, 175, 55, 0.06)',
+                            border: '1px solid rgba(212, 175, 55, 0.12)',
+                            color: 'var(--primary)', cursor: 'pointer'
+                        }}
+                    >
+                        <Headphones size={14} />
+                    </button>
+                    <button
+                        onClick={toggleMainPlay}
+                        style={{
+                            width: '34px', height: '34px', borderRadius: '10px',
+                            background: isPlaying ? 'linear-gradient(135deg, #D4AF37, #996515)' : 'rgba(212, 175, 55, 0.1)',
+                            color: isPlaying ? 'black' : 'var(--primary)',
+                            border: 'none', cursor: 'pointer',
+                            display: 'flex', alignItems: 'center', justifyContent: 'center',
+                            flexShrink: 0,
+                            boxShadow: isPlaying ? '0 4px 12px rgba(212, 175, 55, 0.3)' : 'none'
+                        }}
+                    >
+                        {isPlaying ? <Pause size={15} /> : <Play size={15} />}
+                    </button>
+                </div>
+
+                {/* Reciter Menu Overlay */}
+                <AnimatePresence>
+                    {showReciterMenu && (
+                        <motion.div
+                            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                            onClick={() => setShowReciterMenu(false)}
+                            style={{
+                                position: 'fixed', inset: 0, zIndex: 9999,
+                                background: 'rgba(0,0,0,0.75)', display: 'flex',
+                                alignItems: 'center', justifyContent: 'center', padding: '1.5rem'
+                            }}
+                        >
+                            <motion.div
+                                initial={{ scale: 0.9, y: 20 }} animate={{ scale: 1, y: 0 }}
+                                onClick={(e) => e.stopPropagation()}
+                                style={{
+                                    width: '100%', maxWidth: '320px',
+                                    background: 'linear-gradient(135deg, #1e293b 0%, #0f172a 100%)',
+                                    borderRadius: '18px', padding: '1.2rem',
+                                    border: '1px solid rgba(212, 175, 55, 0.2)',
+                                    maxHeight: '65vh', overflowY: 'auto'
+                                }}
+                            >
+                                <h4 style={{ color: 'var(--primary)', marginBottom: '0.8rem', textAlign: 'center', fontSize: '0.95rem' }}>
+                                    {language === 'ku' ? 'خوێنەر هەڵبژێرە' : 'Select Reciter'}
+                                </h4>
+                                {reciters.map(reciter => (
+                                    <button
+                                        key={reciter.id}
+                                        onClick={() => {
+                                            setSelectedReciter(reciter.id);
+                                            setDownloadReciter(reciter.id);
+                                            setShowReciterMenu(false);
+                                        }}
+                                        style={{
+                                            width: '100%', padding: '0.7rem 0.8rem',
+                                            textAlign: language === 'ku' ? 'right' : 'left',
+                                            background: selectedReciter === reciter.id ? 'rgba(212, 175, 55, 0.15)' : 'transparent',
+                                            color: selectedReciter === reciter.id ? 'var(--primary)' : 'rgba(255,255,255,0.65)',
+                                            border: 'none', borderRadius: '10px',
+                                            cursor: 'pointer', marginBottom: '0.2rem',
+                                            fontSize: '0.85rem',
+                                            fontWeight: selectedReciter === reciter.id ? 'bold' : 'normal'
+                                        }}
+                                    >
+                                        {reciter.name[language]}
+                                    </button>
+                                ))}
+                            </motion.div>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
+
+                {/* Mobile Verse Content - fills remaining space */}
+                <div
+                    ref={containerRef}
+                    style={{ flex: 1, overflowY: 'auto', background: '#050810', padding: '0.8rem 0.6rem' }}
+                >
+                    <audio ref={audioRef} preload="auto" />
+                    {loading ? (
+                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1.2rem', marginTop: '4rem' }}>
+                            <Loader2 size={40} className="animate-spin" color="var(--primary)" style={{ opacity: 0.3 }} />
+                            <p style={{ color: 'rgba(255,255,255,0.3)', fontSize: '0.7rem', letterSpacing: '2px', textTransform: 'uppercase' }}>
+                                {language === 'ku' ? 'چاوەڕوانبە...' : 'Loading...'}
+                            </p>
+                        </div>
+                    ) : error ? (
+                        <div style={{ textAlign: 'center', marginTop: '3rem', padding: '1.5rem' }}>
+                            <AlertCircle size={36} color="#ff4444" style={{ margin: '0 auto 0.8rem' }} />
+                            <p style={{ color: '#ff4444', fontSize: '0.9rem' }}>{error}</p>
+                        </div>
+                    ) : (
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: viewMode === 'page' ? '1.5rem' : '2rem' }}>
+                            {viewMode === 'ayah' ? (
+                                verses.map((v, idx) => (
+                                    <motion.div
+                                        key={idx}
+                                        ref={el => ayahRefs.current[v.id] = el}
+                                        initial={{ opacity: 0, y: 15 }}
+                                        whileInView={{ opacity: 1, y: 0 }}
+                                        viewport={{ once: true, margin: "-30px" }}
+                                        style={{
+                                            display: 'flex', flexDirection: 'column', gap: '1rem',
+                                            background: currentPlayingAyah === v.id ? 'rgba(212, 175, 55, 0.04)' : 'transparent',
+                                            borderRadius: '14px', padding: '0.8rem', transition: 'all 0.4s',
+                                            border: currentPlayingAyah === v.id ? '1px solid rgba(212, 175, 55, 0.1)' : '1px solid transparent'
+                                        }}
+                                    >
+                                        <div style={{
+                                            fontSize: '1.4rem',
+                                            lineHeight: '2.4',
+                                            textAlign: 'center',
+                                            fontFamily: 'var(--font-display)',
+                                            color: currentPlayingAyah === v.id ? 'var(--primary)' : 'white',
+                                            direction: 'rtl',
+                                            transition: 'color 0.3s'
+                                        }}>
+                                            {v.arabic}
+                                            <div style={{
+                                                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                                gap: '0.8rem', marginTop: '1rem'
+                                            }}>
+                                                <div style={{ width: '30px', height: '1px', background: 'linear-gradient(to left, var(--primary), transparent)', opacity: 0.25 }} />
+                                                <button
+                                                    onClick={() => playAyah(v.id)}
+                                                    style={{
+                                                        width: '30px', height: '30px',
+                                                        border: '1.5px solid rgba(212, 175, 55, 0.35)', borderRadius: '8px',
+                                                        fontSize: '0.7rem', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                                        color: currentPlayingAyah === v.id ? 'black' : 'var(--primary)',
+                                                        background: currentPlayingAyah === v.id ? 'linear-gradient(135deg, #D4AF37, #996515)' : 'rgba(212, 175, 55, 0.05)',
+                                                        fontWeight: '900', transform: 'rotate(45deg)', cursor: 'pointer',
+                                                        transition: 'all 0.3s'
+                                                    }}>
+                                                    <span style={{ transform: 'rotate(-45deg)' }}>{v.id}</span>
+                                                </button>
+                                                <div style={{ width: '30px', height: '1px', background: 'linear-gradient(to right, var(--primary), transparent)', opacity: 0.25 }} />
+                                            </div>
+                                        </div>
+
+                                        {showTafseer && (
+                                            <div style={{
+                                                background: 'rgba(255,255,255,0.015)',
+                                                borderRadius: '12px', padding: '0.8rem',
+                                                border: '1px solid rgba(255,255,255,0.03)'
+                                            }}>
+                                                <div style={{
+                                                    fontSize: '0.85rem', lineHeight: '1.8',
+                                                    color: 'rgba(255,255,255,0.75)',
+                                                    textAlign: language === 'ku' ? 'right' : 'left',
+                                                    marginBottom: '0.8rem',
+                                                    paddingBottom: '0.8rem',
+                                                    borderBottom: '1px solid rgba(255,255,255,0.04)'
+                                                }}>
+                                                    <span style={{ opacity: 0.3, fontSize: '0.6rem', textTransform: 'uppercase', letterSpacing: '1.5px', display: 'block', marginBottom: '0.4rem' }}>
+                                                        {language === 'ku' ? 'واتا' : 'Translation'}
+                                                    </span>
+                                                    {v[language]}
+                                                </div>
+                                                <div style={{
+                                                    fontSize: '0.82rem', lineHeight: '1.7',
+                                                    color: 'var(--primary)', textAlign: 'right'
+                                                }}>
+                                                    <span style={{ opacity: 0.35, fontSize: '0.6rem', textTransform: 'uppercase', letterSpacing: '1.5px', display: 'block', marginBottom: '0.4rem' }}>
+                                                        تەفسیری بامۆکی
+                                                    </span>
+                                                    {v.tafseer}
+                                                </div>
+                                            </div>
+                                        )}
+                                    </motion.div>
+                                ))
+                            ) : (
+                                Object.entries(verses.reduce((acc, v) => {
+                                    if (!acc[v.page]) acc[v.page] = [];
+                                    acc[v.page].push(v);
+                                    return acc;
+                                }, {})).map(([pageNum, pageVerses], pIdx) => (
+                                    <motion.div
+                                        key={pageNum}
+                                        initial={{ opacity: 0 }}
+                                        whileInView={{ opacity: 1 }}
+                                        viewport={{ once: true }}
+                                        style={{
+                                            background: 'rgba(212, 175, 55, 0.01)',
+                                            borderRadius: '14px', padding: '1rem',
+                                            border: '1px solid rgba(212, 175, 55, 0.04)',
+                                            position: 'relative'
+                                        }}
+                                    >
+                                        <div style={{
+                                            textAlign: 'center',
+                                            fontSize: '0.55rem', opacity: 0.25, letterSpacing: '1px',
+                                            textTransform: 'uppercase', marginBottom: '0.5rem'
+                                        }}>
+                                            Page {pageNum}
+                                        </div>
+                                        <div style={{
+                                            fontSize: '1.15rem', lineHeight: '2.3',
+                                            textAlign: 'justify', fontFamily: 'var(--font-display)',
+                                            color: '#fff', direction: 'rtl'
+                                        }}>
+                                            {pageVerses.map((v) => (
+                                                <span
+                                                    key={v.id}
+                                                    ref={el => ayahRefs.current[v.id] = el}
+                                                    style={{
+                                                        position: 'relative',
+                                                        background: currentPlayingAyah === v.id ? 'rgba(212, 175, 55, 0.08)' : 'transparent',
+                                                        borderRadius: '5px', transition: 'background 0.3s'
+                                                    }}
+                                                >
+                                                    {v.arabic}
+                                                    <span
+                                                        onClick={() => playAyah(v.id)}
+                                                        style={{
+                                                            fontSize: '0.55rem', margin: '0 0.35rem',
+                                                            display: 'inline-flex',
+                                                            width: '22px', height: '22px',
+                                                            alignItems: 'center', justifyContent: 'center',
+                                                            border: currentPlayingAyah === v.id ? '1.5px solid var(--primary)' : '1px solid rgba(212, 175, 55, 0.25)',
+                                                            borderRadius: '6px',
+                                                            color: currentPlayingAyah === v.id ? 'black' : 'var(--primary)',
+                                                            background: currentPlayingAyah === v.id ? 'linear-gradient(135deg, #D4AF37, #996515)' : 'rgba(212, 175, 55, 0.04)',
+                                                            verticalAlign: 'middle', fontWeight: '900', cursor: 'pointer',
+                                                            transform: 'rotate(45deg)', transition: 'all 0.3s'
+                                                        }}
+                                                    >
+                                                        <span style={{ transform: 'rotate(-45deg)' }}>{v.id}</span>
+                                                    </span>
+                                                    {showTafseer && (
+                                                        <div style={{
+                                                            display: 'block', background: 'rgba(255,255,255,0.015)',
+                                                            padding: '0.6rem', borderRadius: '10px',
+                                                            margin: '0.4rem 0', fontSize: '0.8rem',
+                                                            lineHeight: '1.6', color: 'rgba(255,255,255,0.65)',
+                                                            textAlign: language === 'ku' ? 'right' : 'left',
+                                                            borderLeft: language === 'en' ? '2px solid var(--primary)' : 'none',
+                                                            borderRight: language === 'ku' ? '2px solid var(--primary)' : 'none'
+                                                        }}>
+                                                            <strong style={{ display: 'block', marginBottom: '0.2rem', color: 'var(--primary)', fontSize: '0.7rem' }}>
+                                                                {t.ayah} {v.id}:
+                                                            </strong>
+                                                            {v[language]}
+                                                            <div style={{ marginTop: '0.4rem', color: 'var(--primary)', opacity: 0.8, fontSize: '0.75rem' }}>
+                                                                {v.tafseer}
+                                                            </div>
+                                                        </div>
+                                                    )}
+                                                </span>
+                                            ))}
+                                        </div>
+                                    </motion.div>
+                                ))
+                            )}
+                        </div>
+                    )}
+                </div>
+
+                {/* Bottom Navigation Bar */}
+                <div style={{
+                    padding: '0.5rem 0.8rem',
+                    background: 'linear-gradient(to top, rgba(15, 23, 42, 0.98), rgba(10, 15, 30, 0.95))',
+                    borderTop: '1px solid rgba(255,255,255,0.05)',
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    flexShrink: 0
+                }}>
+                    <button
+                        onClick={() => navigateSurah(-1)}
+                        disabled={selectedSurahIndex === 0}
+                        style={{
+                            padding: '0.4rem 0.8rem', borderRadius: '9px',
+                            background: selectedSurahIndex === 0 ? 'rgba(255,255,255,0.02)' : 'rgba(212, 175, 55, 0.08)',
+                            border: `1px solid ${selectedSurahIndex === 0 ? 'rgba(255,255,255,0.04)' : 'rgba(212, 175, 55, 0.15)'}`,
+                            color: selectedSurahIndex === 0 ? 'rgba(255,255,255,0.12)' : 'var(--primary)',
+                            cursor: selectedSurahIndex === 0 ? 'not-allowed' : 'pointer',
+                            fontSize: '0.75rem', fontWeight: '700',
+                            display: 'flex', alignItems: 'center', gap: '3px'
+                        }}
+                    >
+                        <ChevronRight size={14} />
+                        {language === 'ku' ? 'پێشوو' : 'Prev'}
+                    </button>
+                    <span style={{
+                        color: 'rgba(255,255,255,0.4)', fontSize: '0.7rem', fontWeight: '700',
+                        display: 'flex', alignItems: 'center', gap: '0.5rem'
+                    }}>
+                        <span style={{ color: 'var(--primary)', fontWeight: '900' }}>{selectedSurahIndex + 1}</span>
+                        /
+                        <span>114</span>
+                    </span>
+                    <button
+                        onClick={() => navigateSurah(1)}
+                        disabled={selectedSurahIndex === surahInfo.length - 1}
+                        style={{
+                            padding: '0.4rem 0.8rem', borderRadius: '9px',
+                            background: selectedSurahIndex === surahInfo.length - 1 ? 'rgba(255,255,255,0.02)' : 'rgba(212, 175, 55, 0.08)',
+                            border: `1px solid ${selectedSurahIndex === surahInfo.length - 1 ? 'rgba(255,255,255,0.04)' : 'rgba(212, 175, 55, 0.15)'}`,
+                            color: selectedSurahIndex === surahInfo.length - 1 ? 'rgba(255,255,255,0.12)' : 'var(--primary)',
+                            cursor: selectedSurahIndex === surahInfo.length - 1 ? 'not-allowed' : 'pointer',
+                            fontSize: '0.75rem', fontWeight: '700',
+                            display: 'flex', alignItems: 'center', gap: '3px'
+                        }}
+                    >
+                        {language === 'ku' ? 'دواتر' : 'Next'}
+                        <ChevronLeft size={14} />
+                    </button>
+                </div>
+
+                {/* Mobile Download Modal */}
+                <AnimatePresence>
+                    {showDownloadModal && (
+                        <motion.div
+                            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                            style={{
+                                position: 'fixed', inset: 0, zIndex: 2000,
+                                background: 'rgba(0,0,0,0.85)', backdropFilter: 'blur(10px)',
+                                display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem'
+                            }}
+                        >
+                            <motion.div
+                                initial={{ scale: 0.9, y: 30 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.9 }}
+                                style={{
+                                    width: '100%', maxWidth: '360px',
+                                    background: 'linear-gradient(135deg, #1e293b 0%, #0f172a 100%)',
+                                    borderRadius: '18px', padding: '1.2rem',
+                                    border: '1px solid rgba(255,255,255,0.1)',
+                                    position: 'relative', textAlign: 'center',
+                                    maxHeight: '80vh', overflowY: 'auto'
+                                }}
+                            >
+                                <button onClick={() => setShowDownloadModal(false)} style={{ position: 'absolute', top: '8px', right: '8px', background: 'rgba(255,255,255,0.05)', border: 'none', color: 'white', padding: '6px', borderRadius: '50%', cursor: 'pointer' }}>
+                                    <X size={14} />
+                                </button>
+                                <h3 style={{ fontSize: '1.1rem', marginBottom: '1rem', color: 'white' }}>
+                                    {language === 'ku' ? 'داگرتنی دەنگ' : 'Download Audio'}
+                                </h3>
+                                <select value={downloadReciter} onChange={(e) => setDownloadReciter(e.target.value)} style={{ width: '100%', padding: '0.6rem', borderRadius: '10px', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: 'white', fontSize: '0.8rem', outline: 'none', marginBottom: '0.8rem' }}>
+                                    {reciters.map(r => (<option key={r.id} value={r.id} style={{ background: '#1e293b' }}>{r.name[language]}</option>))}
+                                </select>
+                                <div style={{ display: 'flex', gap: '0.4rem', marginBottom: '0.8rem' }}>
+                                    <button onClick={() => setDownloadScope('surah')} style={{ flex: 1, padding: '0.6rem', borderRadius: '10px', background: downloadScope === 'surah' ? 'var(--primary)' : 'rgba(255,255,255,0.05)', color: downloadScope === 'surah' ? 'black' : 'white', border: 'none', fontWeight: 'bold', cursor: 'pointer', fontSize: '0.75rem' }}>
+                                        {language === 'ku' ? 'هەموو سورەتەکە' : 'Full Surah'}
+                                    </button>
+                                    <button onClick={() => setDownloadScope('ayah')} style={{ flex: 1, padding: '0.6rem', borderRadius: '10px', background: downloadScope === 'ayah' ? 'var(--primary)' : 'rgba(255,255,255,0.05)', color: downloadScope === 'ayah' ? 'black' : 'white', border: 'none', fontWeight: 'bold', cursor: 'pointer', fontSize: '0.75rem' }}>
+                                        {language === 'ku' ? 'دیاریکردنی ئایەت' : 'Select Verses'}
+                                    </button>
+                                </div>
+                                {downloadScope === 'ayah' && (
+                                    <div style={{ marginBottom: '0.8rem', display: 'flex', gap: '0.4rem', justifyContent: 'center', alignItems: 'center' }}>
+                                        <input type="number" min="1" max={verses.length} value={downloadStartAyah} onChange={(e) => { const val = Math.min(verses.length, Math.max(1, parseInt(e.target.value) || 1)); setDownloadStartAyah(val); if (val > downloadEndAyah) setDownloadEndAyah(val); }} style={{ width: '55px', padding: '0.4rem', textAlign: 'center', borderRadius: '8px', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: 'var(--primary)', fontSize: '0.9rem', fontWeight: 'bold' }} />
+                                        <span style={{ color: 'rgba(255,255,255,0.3)', fontSize: '0.8rem' }}>→</span>
+                                        <input type="number" min={downloadStartAyah} max={verses.length} value={downloadEndAyah} onChange={(e) => setDownloadEndAyah(Math.min(verses.length, Math.max(downloadStartAyah, parseInt(e.target.value) || downloadStartAyah)))} style={{ width: '55px', padding: '0.4rem', textAlign: 'center', borderRadius: '8px', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: 'var(--primary)', fontSize: '0.9rem', fontWeight: 'bold' }} />
+                                    </div>
+                                )}
+                                <div onClick={handleSmartDownload} style={{ background: 'linear-gradient(135deg, #10B981 0%, #059669 100%)', padding: '0.7rem', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', cursor: 'pointer', color: 'white', boxShadow: '0 4px 15px rgba(16, 185, 129, 0.3)' }}>
+                                    <Download size={16} />
+                                    <span style={{ fontSize: '0.9rem', fontWeight: 'bold' }}>{language === 'ku' ? 'داگرتن' : 'Download'}</span>
+                                </div>
+                            </motion.div>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
+            </section>
+        );
+    }
+
+    // ============ DESKTOP LAYOUT (unchanged) ============
     return (
         <section id="quran" ref={explorerRef} className="container" style={{
             padding: isFullscreen ? '0' : '8rem 0',
