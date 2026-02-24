@@ -1,24 +1,22 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Quote } from 'lucide-react';
+import { ramadanDuas } from '../data/ramadanDuas';
 
 const DailyDua = ({ t, language }) => {
-    const dua = {
-        arabic: "اللَّهُمَّ إِنَّكَ عَفُوٌّ تُحِبُّ الْعَفْوَ فَاعْفُ عَنِّي",
-        en: {
-            transliteration: "Allahumma innaka 'afuwwun tuhibbul-'afwa fa'fu 'anni",
-            translation: "خودایە، تۆ زۆر لێبووردەی و لێبووردنیت خۆش دەوێت، دەی لە من ببورە.",
-            source: "پێشنیار کراوە بۆ ١٠ شەوی کۆتایی ڕەمەزان"
-        },
-        ku: {
-            transliteration: "ئەڵڵاھوممە ئیننەکە عەفوووەن توحیببول عەفوە فەعفو عەننی",
-            translation: "خودایە، تۆ زۆر لێبووردەی و لێبووردنیت خۆش دەوێت، دەی لە من ببورە.",
-            tafseer: "ئەم دوعایە یەکێکە لە پڕ ماناترین و گرنگترین دوعاکان کە پێغەمبەر (سەلامی خودای لێبێت) فێری دایکی ئیمانداران عائیشەی کردووە، کاتێک پرسیاری لێکرد ئەگەر زانیم چ شەوێک شەوی قەدرە چی بڵێم؟ فەرمووی بڵێ ئەم دوعایە. لێبووردن (عەفو) لە لایەن خوداوە بە واتای سڕینەوەی گوناهەکان دێت بە جۆرێک کە هیچ شوێنەواریان نەمێنێت.",
-            source: "پێشنیار کراوە بۆ ١٠ شەوی کۆتایی ڕەمەزان"
-        }
-    };
+    const now = new Date();
+    const month = now.getMonth();
+    const date = now.getDate();
 
-    const content = language === 'ku' ? dua.ku : dua.en;
+    let duaIndex = (date - 1) % 30;
+
+    if (month === 2) {
+        duaIndex = Math.min(date - 1, 29);
+    } else if (month === 3 && date <= 1) {
+        duaIndex = 29;
+    }
+
+    const currentDua = ramadanDuas[duaIndex] || ramadanDuas[30];
 
     return (
         <section id="dua" className="container" style={{ padding: '6rem 0' }}>
@@ -70,44 +68,21 @@ const DailyDua = ({ t, language }) => {
                         direction: 'rtl',
                         color: 'var(--primary)'
                     }}>
-                        {dua.arabic}
+                        {currentDua.arabic}
                     </h3>
 
                     <div style={{ maxWidth: '800px', margin: '0 auto' }}>
                         <p style={{
-                            fontSize: '1.25rem',
-                            fontStyle: 'italic',
+                            fontSize: '1.75rem',
                             color: 'var(--text-white)',
-                            marginBottom: '1rem',
-                            lineHeight: '1.6'
-                        }}>
-                            "{content.transliteration}"
-                        </p>
-                        <p style={{
-                            fontSize: '1.5rem',
-                            color: 'var(--text-dim)',
+                            lineHeight: '1.8',
+                            fontFamily: 'var(--font-kurdish)',
                             marginBottom: '2rem'
                         }}>
-                            {content.translation}
+                            "{currentDua.ku}"
                         </p>
-                        {language === 'ku' && content.tafseer && (
-                            <div style={{
-                                padding: '1.5rem',
-                                background: 'rgba(212, 175, 55, 0.05)',
-                                borderRadius: '15px',
-                                border: '1px solid var(--primary-glow)',
-                                color: 'var(--primary)',
-                                marginBottom: '2rem',
-                                textAlign: 'right',
-                                fontSize: '1.1rem',
-                                lineHeight: '1.8'
-                            }}>
-                                <strong style={{ display: 'block', marginBottom: '0.5rem' }}>تەفسیر/مانا:</strong>
-                                {content.tafseer}
-                            </div>
-                        )}
-                        <div style={{ fontSize: '0.9rem', color: 'var(--primary)', opacity: 0.8 }}>
-                            — {content.source}
+                        <div style={{ fontSize: '1rem', color: 'var(--primary)', opacity: 0.8, letterSpacing: '2px' }}>
+                            — {language === 'ku' ? `بەشی ڕۆژی ${duaIndex + 1}` : `Day ${duaIndex + 1} Selection`}
                         </div>
                     </div>
                 </motion.div>

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { ramadanDuas } from '../data/ramadanDuas';
 
 const cityIftarTimes = {
     'Erbil': '18:12:00',
@@ -167,50 +168,70 @@ const Hero = ({ selectedCity, t }) => {
             </motion.div>
 
             {/* Important Ramadan Dua Section */}
-            <motion.div
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 1.2 }}
-                style={{
-                    maxWidth: '800px',
-                    padding: '2.5rem',
-                    borderRadius: '30px',
-                    background: 'linear-gradient(135deg, rgba(212, 175, 55, 0.05) 0%, rgba(212, 175, 55, 0.02) 100%)',
-                    border: '1px solid rgba(212, 175, 55, 0.1)',
-                    backdropFilter: 'blur(10px)',
-                    position: 'relative',
-                    zIndex: 1
-                }}
-            >
-                <div style={{
-                    fontFamily: "'Amiri', serif",
-                    fontSize: '2.2rem',
-                    color: 'white',
-                    marginBottom: '1rem',
-                    direction: 'rtl',
-                    lineHeight: '1.6'
-                }}>
-                    اللَّهُمَّ إِنَّكَ عَفُوٌّ تُحِبُّ الْعَفْوَ فَاعْفُ عَنِّي
-                </div>
-                <div style={{
-                    color: 'var(--primary)',
-                    fontSize: '1.1rem',
-                    fontWeight: '500',
-                    fontFamily: 'var(--font-kurdish)',
-                    opacity: 0.9
-                }}>
-                    "خودایە تۆ لێخۆشبوویت و لێخۆشبوونت خۆش دەوێت، دەی لێم خۆشبە"
-                </div>
-                <div style={{
-                    marginTop: '1.5rem',
-                    fontSize: '0.75rem',
-                    color: 'rgba(255,255,255,0.3)',
-                    textTransform: 'uppercase',
-                    letterSpacing: '3px'
-                }}>
-                    {t.daily_dua}
-                </div>
-            </motion.div>
+            {(() => {
+                const now = new Date();
+                const month = now.getMonth(); // 0-indexed, Jan = 0, Feb = 1, Mar = 2
+                const date = now.getDate();
+
+                let duaIndex = (date - 1) % 30; // Default rotation
+
+                // Specific logic for Ramadan 2026 (Starting around March 1st)
+                if (month === 2) { // March
+                    duaIndex = Math.min(date - 1, 29);
+                } else if (month === 3 && date <= 1) { // April 1st might still be Ramadan/Eid
+                    duaIndex = 29;
+                }
+
+                const currentDua = ramadanDuas[duaIndex] || ramadanDuas[30];
+
+                return (
+                    <motion.div
+                        initial={{ opacity: 0, y: 30 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 1.2 }}
+                        style={{
+                            maxWidth: '800px',
+                            padding: '2.5rem',
+                            borderRadius: '30px',
+                            background: 'linear-gradient(135deg, rgba(212, 175, 55, 0.05) 0%, rgba(212, 175, 55, 0.02) 100%)',
+                            border: '1px solid rgba(212, 175, 55, 0.1)',
+                            backdropFilter: 'blur(10px)',
+                            position: 'relative',
+                            zIndex: 1
+                        }}
+                    >
+                        <div style={{
+                            fontFamily: "'Amiri', serif",
+                            fontSize: '2rem',
+                            color: 'white',
+                            marginBottom: '1rem',
+                            direction: 'rtl',
+                            lineHeight: '1.6'
+                        }}>
+                            {currentDua.arabic}
+                        </div>
+                        <div style={{
+                            color: 'var(--primary)',
+                            fontSize: '1.2rem',
+                            fontWeight: '500',
+                            fontFamily: 'var(--font-kurdish)',
+                            opacity: 0.9,
+                            lineHeight: '1.6'
+                        }}>
+                            "{currentDua.ku}"
+                        </div>
+                        <div style={{
+                            marginTop: '1.5rem',
+                            fontSize: '0.75rem',
+                            color: 'rgba(255,255,255,0.3)',
+                            textTransform: 'uppercase',
+                            letterSpacing: '3px'
+                        }}>
+                            {t.daily_dua} - {language === 'ku' ? `ڕۆژی ${duaIndex + 1}` : `Day ${duaIndex + 1}`}
+                        </div>
+                    </motion.div>
+                );
+            })()}
         </section>
     );
 };
