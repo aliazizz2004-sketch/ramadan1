@@ -395,19 +395,21 @@ const QuranViewer = ({ day, prayer, onClose, t, language, onComplete, currentPag
                                                     })}
                                                     <span style={{
                                                         display: 'inline-flex',
-                                                        width: viewMode === 'book' ? '38px' : '52px',
-                                                        height: viewMode === 'book' ? '38px' : '52px',
+                                                        width: viewMode === 'book' ? '28px' : '36px',
+                                                        height: viewMode === 'book' ? '28px' : '36px',
                                                         borderRadius: '50%',
-                                                        border: `2px solid ${isActive ? '#8b4513' : (viewMode === 'book' ? '#d4af37' : 'rgba(212, 175, 55, 0.2)')}`,
-                                                        fontSize: viewMode === 'book' ? '0.9rem' : '1.2rem',
+                                                        border: `1.5px solid ${isActive ? '#8b4513' : (viewMode === 'book' ? '#d4af37' : 'rgba(212, 175, 55, 0.3)')}`,
+                                                        fontSize: viewMode === 'book' ? '0.75rem' : '0.9rem',
                                                         alignItems: 'center',
                                                         justifyContent: 'center',
-                                                        margin: viewMode === 'book' ? '0 8px' : '0 15px',
-                                                        color: isActive ? '#8b4513' : (viewMode === 'book' ? '#8b4513' : 'rgba(212, 175, 55, 0.6)'),
+                                                        margin: viewMode === 'book' ? '0 6px' : '0 10px',
+                                                        color: isActive ? '#8b4513' : (viewMode === 'book' ? '#8b4513' : 'rgba(212, 175, 55, 0.7)'),
                                                         fontWeight: 'bold',
                                                         position: 'relative',
-                                                        top: viewMode === 'book' ? '8px' : '10px',
-                                                        transition: '0.4s'
+                                                        top: viewMode === 'book' ? '0px' : '2px', // Adjusted for better baseline alignment
+                                                        transition: '0.4s',
+                                                        background: isActive ? 'rgba(212, 175, 55, 0.1)' : 'transparent',
+                                                        flexShrink: 0
                                                     }}>
                                                         {v.verse_key.split(':')[1]}
                                                     </span>

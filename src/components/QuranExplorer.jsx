@@ -1530,24 +1530,24 @@ const QuranExplorer = ({ t, language }) => {
                                                         <span
                                                             onClick={() => playAyah(v.id)}
                                                             style={{
-                                                                fontSize: '0.9rem',
-                                                                margin: '0 1rem',
+                                                                fontSize: '0.8rem',
+                                                                margin: '0 0.8rem',
                                                                 display: 'inline-flex',
-                                                                width: '38px', height: '38px',
+                                                                width: '32px', height: '32px',
                                                                 alignItems: 'center', justifyContent: 'center',
                                                                 border: currentPlayingAyah === v.id ? '2px solid var(--primary)' : '1px solid rgba(212, 175, 55, 0.3)',
-                                                                borderRadius: '12px',
+                                                                borderRadius: '50%',
                                                                 color: currentPlayingAyah === v.id ? 'black' : 'var(--primary)',
                                                                 background: currentPlayingAyah === v.id ? 'linear-gradient(135deg, #D4AF37, #996515)' : 'rgba(212, 175, 55, 0.05)',
                                                                 verticalAlign: 'middle',
                                                                 fontWeight: '900',
                                                                 cursor: 'pointer',
-                                                                transform: 'rotate(45deg)',
                                                                 boxShadow: currentPlayingAyah === v.id ? '0 5px 15px rgba(212, 175, 55, 0.3)' : 'none',
-                                                                transition: 'all 0.3s'
+                                                                transition: 'all 0.3s',
+                                                                flexShrink: 0
                                                             }}
                                                         >
-                                                            <span style={{ transform: 'rotate(-45deg)' }}>{v.id}</span>
+                                                            <span>{v.id}</span>
                                                         </span>
                                                         {showTafseer && (
                                                             <div style={{
