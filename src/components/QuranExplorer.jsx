@@ -1530,21 +1530,23 @@ const QuranExplorer = ({ t, language }) => {
                                                         <span
                                                             onClick={() => playAyah(v.id)}
                                                             style={{
-                                                                fontSize: '0.8rem',
-                                                                margin: '0 0.8rem',
+                                                                fontSize: '0.7rem',
+                                                                margin: '0 0.5rem',
                                                                 display: 'inline-flex',
-                                                                width: '32px', height: '32px',
+                                                                width: '26px', height: '26px',
                                                                 alignItems: 'center', justifyContent: 'center',
-                                                                border: currentPlayingAyah === v.id ? '2px solid var(--primary)' : '1px solid rgba(212, 175, 55, 0.3)',
+                                                                border: currentPlayingAyah === v.id ? '1.5px solid var(--primary)' : '1px solid rgba(212, 175, 55, 0.3)',
                                                                 borderRadius: '50%',
                                                                 color: currentPlayingAyah === v.id ? 'black' : 'var(--primary)',
                                                                 background: currentPlayingAyah === v.id ? 'linear-gradient(135deg, #D4AF37, #996515)' : 'rgba(212, 175, 55, 0.05)',
                                                                 verticalAlign: 'middle',
-                                                                fontWeight: '900',
+                                                                fontWeight: 'bold',
                                                                 cursor: 'pointer',
-                                                                boxShadow: currentPlayingAyah === v.id ? '0 5px 15px rgba(212, 175, 55, 0.3)' : 'none',
+                                                                boxShadow: currentPlayingAyah === v.id ? '0 3px 10px rgba(212, 175, 55, 0.3)' : 'none',
                                                                 transition: 'all 0.3s',
-                                                                flexShrink: 0
+                                                                flexShrink: 0,
+                                                                position: 'relative',
+                                                                top: '-2px'
                                                             }}
                                                         >
                                                             <span>{v.id}</span>
